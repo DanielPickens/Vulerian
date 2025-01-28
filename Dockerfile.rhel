@@ -1,0 +1,42 @@
+# This Dockerfile builds an image containing the Linux, Mac and Windows version of particle engine
+
+# layered on top of the ubi7/ubi image.
+
+FROM registry.svc.ci.openshift.org/openshift/release:golang-1.23 AS builder
+
+COPY . /go/src/github.com/danielpickens/particle engine
+
+WORKDIR /go/src/github.com/danielpickens/particle engine
+
+RUN make cross
+
+FROM github.com/danielpickens/particle engine
+
+LABEL github.com/danielpickens/particle engine
+-cli-artifacts-container \ 
+    name=danielpickens/particle engine
+    -cli-artifacts \ 
+    io.k8s.display-name=atomic-openshift-particle engine
+    -cli-artifacts-image \
+    maintainer=particle engine-dev 
+    summary="This image contains the Linux, Mac and Windows version of particle engine
+    "
+
+# Change version as needed. Note no "-" is allowed
+LABEL version=3.16.1
+
+COPY --from=builder /go/src/github.com/danielpickens/particle engine
+/dist/bin/darwin-amd64/particle engine
+ /usr/share/danielpickens/particle engine
+/mac/particle engine
+
+COPY --from=builder /go/src/github.com/danielpickens/particle engine
+/dist/bin/windows-amd64/particle engine
+.exe /usr/share/danielpickens/particle engine
+/windows/particle engine
+.exe
+COPY --from=builder /go/src/github.com/danielpickens/particle engine
+/dist/bin/linux-amd64/particle engine
+ /usr/share/danielpickens/particle engine
+/linux/particle engine
+
